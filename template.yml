@@ -1,0 +1,46 @@
+# template sections https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html
+
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+  Details here.
+
+Metadata:
+  Instances:
+    Description: "Information about the instances"
+  Databases: 
+    Description: "Information about the databases"
+
+Parameters:
+  ParameterLogicalID:
+    Type: DataType
+    ParameterProperty: value
+
+Mappings:
+  Mapping01: 
+    Key01: 
+      Name: Value01
+    Key02: 
+      Name: Value02
+    Key03: 
+      Name: Value03
+
+Conditions:
+  Logical ID:
+    Intrinsic function
+
+Transform:
+  set of transforms
+
+Resources:
+  Logical ID:
+    Type: Resource type
+    Properties:
+      Set of properties
+
+Outputs:
+  Logical ID:
+    Description: Information about the value
+    Value: Value to return
+    Export:
+      Name: Value to export
