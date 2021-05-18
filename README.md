@@ -16,10 +16,10 @@ virtual data center in the cloud. control resources, sec, traffic btwn services
 - Lower the #, the more Ips 
 - CIDR to IPv4 Conversion - https://ipaddressguide.com/cidr
 
-/32 = 1 IP
-/24 = 256 IPs
-/16 = 65536 IPs
-/0 = allows all IPs
+- /32 = 1 IP
+- /24 = 256 IPs
+- /16 = 65536 IPs
+- /0 = allows all IPs
 
 Only private IP ranges allowed
 - 10.0.0.0/16 (10.0.0.0 - 10.0.255.255), Total host - 65,536
@@ -98,10 +98,15 @@ Route tables
 - choose target - ngw
 - save routes
 
-## Step 6: Security groups + flow logs
-edit demo sg - Inbound rules - SSH, source - 0.0.0.0/0
+## Step 6: Security
+sg 
+- created by default
+- edit demo sg - Inbound rules - SSH, source - 0.0.0.0/0
 
-create flow log
+nacl
+- created by default, edit inbound/outbound rules
+
+flow log
 - select VPC
 - create FL, name - demo-fl
 - filter - accept, reject, or all
