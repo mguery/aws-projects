@@ -30,7 +30,7 @@ Only private IP ranges allowed
 
 ## Step 1: Create VPC
 from [vpc console](https://console.aws.amazon.com/vpc/home?region=us-east-1#vpcs:), click create vpc
-- name tag - demo-vpc
+- name tag - DemoVPC
 - IPv4 block - 10.0.0.0/16
 - IPv6 cidr block - no block or Amazon-provided IPv6 CIDR block
 - Tenancy - default
@@ -143,6 +143,7 @@ delete vpc - deletes vpc, rts, subnets, igw
 
 
 # Project: Build a VPC with CloudFormation
-
+[Link to CFN file]()
 
 # Project: Build a VPC with Terraform
+[Link to project]()
