@@ -143,7 +143,7 @@ delete vpc - deletes vpc, rts, subnets, igw
 
 
 # Project: Build a VPC with CloudFormation
-[Link to CFN file]()
+[Link to CFN file](https://github.com/mguery/aws-projects/blob/main/cfn/cfn-vpc.yml)
 
 # Project: Build a VPC with Terraform
 [Link to project]()
