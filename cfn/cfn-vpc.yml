@@ -1,5 +1,3 @@
-# work in progress 
-
 AWSTemplateFormatVersion: "2010-09-09"
 
 Description: >
@@ -15,38 +13,38 @@ Parameters:
     Type: String
     Default: 10.0.0.0/16
 
-  PublicSubnetACIDR:
+  PublicSubnet1CIDR:
     Description: Please enter the IP range (CIDR notation) for the public subnet in the first Availability Zone
     Type: String
     Default: 10.0.1.0/24
 
-  PublicSubnetBCIDR:
+  PublicSubnet2CIDR:
     Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
     Type: String
     Default: 10.0.2.0/24
 
-  PublicSubnetCCIDR:
+  PublicSubnet3CIDR:
     Description: Please enter the IP range (CIDR notation) for the public subnet in the third Availability Zone
     Type: String
     Default: 10.0.3.0/24  
 
-  PrivateSubnetACIDR:
+  PrivateSubnet1CIDR:
     Description: Please enter the IP range (CIDR notation) for the private subnet in the first Availability Zone
     Type: String
     Default: 10.0.4.0/24
 
-  PrivateSubnetBCIDR:
+  PrivateSubnet2CIDR:
     Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
     Type: String
     Default: 10.0.5.0/24
   
-  PrivateSubnetCCIDR:
+  PrivateSubnet3CIDR:
     Description: Please enter the IP range (CIDR notation) for the private subnet in the third Availability Zone
     Type: String
     Default: 10.0.6.0/24
 
 Resources:
-  DemoVPC:
+  VPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: !Ref VpcCIDR
@@ -68,73 +66,73 @@ Resources:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       InternetGatewayId: !Ref InternetGateway
-      VpcId: !Ref DemoVPC
+      VpcId: !Ref VPC
 
-  PublicSubnetA:
+  PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref DemoVPC
+      VpcId: !Ref VPC
       AvailabilityZone: !Select [ 0, !GetAZs '' ]
-      CidrBlock: !Ref PublicSubnetACIDR
+      CidrBlock: !Ref PublicSubnet1CIDR
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
 
-  PublicSubnetB:
+  PublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref DemoVPC
+      VpcId: !Ref VPC
       AvailabilityZone: !Select [ 1, !GetAZs  '' ]
-      CidrBlock: !Ref PublicSubnetBCIDR
+      CidrBlock: !Ref PublicSubnet2CIDR
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
-
-  PublicSubnetC:
+  
+  PublicSubnet3:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref DemoVPC
+      VpcId: !Ref VPC
       AvailabilityZone: !Select [ 2, !GetAZs  '' ]
-      CidrBlock: !Ref PublicSubnetCCIDR
+      CidrBlock: !Ref PublicSubnet3CIDR
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Subnet (AZ3)          
+          Value: !Sub ${EnvironmentName} Public Subnet (AZ3)        
 
-  PrivateSubnetA:
+  PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref DemoVPC
+      VpcId: !Ref VPC
       AvailabilityZone: !Select [ 0, !GetAZs  '' ]
-      CidrBlock: !Ref PrivateSubnetACIDR
+      CidrBlock: !Ref PrivateSubnet1CIDR
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Private Subnet (AZ1)
 
-  PrivateSubnetB:
+  PrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref DemoVPC
+      VpcId: !Ref VPC
       AvailabilityZone: !Select [ 1, !GetAZs  '' ]
-      CidrBlock: !Ref PrivateSubnetBCIDR
+      CidrBlock: !Ref PrivateSubnet2CIDR
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Private Subnet (AZ2)
 
-  PrivateSubnetC:
+  PrivateSubnet3:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref DemoVPC
+      VpcId: !Ref VPC
       AvailabilityZone: !Select [ 2, !GetAZs  '' ]
-      CidrBlock: !Ref PrivateSubnetCCIDR
+      CidrBlock: !Ref PrivateSubnet3CIDR
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet (AZ3)
+          Value: !Sub ${EnvironmentName} Private Subnet (AZ3)        
 
   NatGateway1EIP:
     Type: AWS::EC2::EIP
@@ -146,12 +144,12 @@ Resources:
     Type: AWS::EC2::NatGateway
     Properties:
       AllocationId: !GetAtt NatGateway1EIP.AllocationId
-      SubnetId: !Ref PublicSubnetA
+      SubnetId: !Ref PublicSubnet1
 
-  PublicRT:
+  PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref DemoVPC
+      VpcId: !Ref VPC
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Public Routes
@@ -160,124 +158,138 @@ Resources:
     Type: AWS::EC2::Route
     DependsOn: InternetGatewayAttachment
     Properties:
-      RouteTableId: !Ref PublicRT
+      RouteTableId: !Ref PublicRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
 
-  PublicSubnetARouteTableAssociation:
+  PublicSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref PublicRT
-      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
 
-  PublicSubnetBRouteTableAssociation:
+  PublicSubnet2RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref PublicRT
-      SubnetId: !Ref PublicSubnetB
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet2
 
-  PublicSubnetCRouteTableAssociation:
+  PublicSubnet3RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref PublicRT
-      SubnetId: !Ref PublicSubnetC
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet3
 
-  PrivateRouteTableA:
+  PrivateRouteTable1:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref DemoVPC
+      VpcId: !Ref VPC
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Private Routes (AZ1)
 
-  DefaultPrivateRouteA:
+  DefaultPrivateRoute1:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId: !Ref PrivateRouteTableA
+      RouteTableId: !Ref PrivateRouteTable1
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGateway1
 
-  PrivateSubnetARouteTableAssociation:
+  PrivateSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref PrivateRouteTableA
-      SubnetId: !Ref PrivateSubnetA
+      RouteTableId: !Ref PrivateRouteTable1
+      SubnetId: !Ref PrivateSubnet1
 
-  PrivateRouteTableB:
+  PrivateRouteTable2:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref DemoVPC
+      VpcId: !Ref VPC
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Private Routes (AZ2)
 
-  DefaultPrivateRouteB:
+  DefaultPrivateRoute2:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId: !Ref PrivateRouteTableB
+      RouteTableId: !Ref PrivateRouteTable2
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway2
 
-  PrivateSubnetCRouteTableAssociation:
+  PrivateSubnet2RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref PrivateRouteTableC
-      SubnetId: !Ref PrivateSubnetC
-  
-  PrivateRouteTableC:
+      RouteTableId: !Ref PrivateRouteTable2
+      SubnetId: !Ref PrivateSubnet2
+
+  PrivateRouteTable3:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref DemoVPC
+      VpcId: !Ref VPC
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Private Routes (AZ3)
 
-  DefaultPrivateRouteC:
+  DefaultPrivateRoute3:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId: !Ref PrivateRouteTableC
+      RouteTableId: !Ref PrivateRouteTable3
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway2
 
-  PrivateSubnetCRouteTableAssociation:
+  PrivateSubnet3RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref PrivateRouteTableC
-      SubnetId: !Ref PrivateSubnetC
+      RouteTableId: !Ref PrivateRouteTable3
+      SubnetId: !Ref PrivateSubnet3
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "Web Access"
+      GroupDescription: "Security group for Demo VPC"
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '22'
+        ToPort: '22'
+        CidrIp: 0.0.0.0/0
 
 Outputs:
   VPC:
     Description: A reference to the created VPC
-    Value: !Ref DemoVPC
+    Value: !Ref VPC
 
   PublicSubnets:
     Description: A list of the public subnets
-    Value: !Join [ ",", [ !Ref PublicSubnetA, !Ref PublicSubnetB, !Ref PublicSubnetC ]]
+    Value: !Join [ ",", [ !Ref PublicSubnet1, !Ref PublicSubnet2, !Ref PublicSubnet3 ]]
 
   PrivateSubnets:
     Description: A list of the private subnets
-    Value: !Join [ ",", [ !Ref PrivateSubnetA, !Ref PrivateSubnetB, !Ref PrivateSubnetC ]]
+    Value: !Join [ ",", [ !Ref PrivateSubnet1, !Ref PrivateSubnet2, !Ref PrivateSubnet3 ]]
 
-  PublicSubnetA:
+  PublicSubnet1:
     Description: A reference to the public subnet in the 1st Availability Zone
-    Value: !Ref PublicSubnetA
+    Value: !Ref PublicSubnet1
 
-  PublicSubnetB:
+  PublicSubnet2:
     Description: A reference to the public subnet in the 2nd Availability Zone
-    Value: !Ref PublicSubnetB
+    Value: !Ref PublicSubnet2
 
-  PublicSubnetC:
+  PublicSubnet3:
     Description: A reference to the public subnet in the 3rd Availability Zone
-    Value: !Ref PublicSubnetC    
+    Value: !Ref PublicSubnet3  
 
-  PrivateSubnetA:
+  PrivateSubnet1:
     Description: A reference to the private subnet in the 1st Availability Zone
-    Value: !Ref PrivateSubnetA
+    Value: !Ref PrivateSubnet1
 
-  PrivateSubnetB:
+  PrivateSubnet2:
     Description: A reference to the private subnet in the 2nd Availability Zone
-    Value: !Ref PrivateSubnetB
-
-  PrivateSubnetC:
+    Value: !Ref PrivateSubnet2
+    
+  PrivateSubnet3:
     Description: A reference to the private subnet in the 3rd Availability Zone
-    Value: !Ref PrivateSubnetC    
+    Value: !Ref PrivateSubnet3
+
+  SecurityGroup:
+    Description: Security group for Demo VPC
+    Value: !Ref SecurityGroup
