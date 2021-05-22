@@ -145,20 +145,22 @@ delete vpc - deletes vpc, rts, subnets, igw
 # Project: Build a VPC with CloudFormation
 [Link to CFN file](https://github.com/mguery/aws-projects/blob/main/cfn/cfn-vpc.yml)
 
-## Steps
-1. Create new stack
+## Steps 
+1. Create stack
 2. Template is ready
 3. Upload a template file
 4. Choose file and upload, Next
-5. Stack name, Add parameters - adding DB name and pw, if needed. Next
-6. ex. Tags - optional, Permissions - create role if its not a root user, Or leave defaults, next
-7. Review, checkbox if applicable, then create stack
-8. Cfn console - under events see resources launching
-9. If you make changes to template file, from your new Stack, under Stack actions, create a changeset for current stack
-10. Replace current template
-11. Upload file, repeat steps, Create, Create change set
-
-Clean up - delete the stack and aws deletes all resources from stack
+5. add Stack name 
+6. Add Parameters, Next
+7. Add Tags - optional
+8. Add Permissions - create role if its not a root user, Or leave default, next
+9. Advanced options - default settings, Next
+10. Review, then Create stack
+11. Cfn Stacks page - under Events see resources launching
+12. If you make changes to template file, from your new Stack, under Stack actions, create a changeset for current stack
+13. Replace current template
+14. Upload file, repeat steps, Create, Create change set
+15. Clean up - delete the stack and aws deletes all resources from stack
 
 # Project: Build a VPC with Terraform
 [Link to project]()
