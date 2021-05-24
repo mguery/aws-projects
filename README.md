@@ -163,4 +163,8 @@ delete vpc - deletes vpc, rts, subnets, igw
 15. Clean up - delete the stack and aws deletes all resources from stack
 
 # Project: Build a VPC with Terraform
-[Link to project]()
+## Steps
+1. Create 'main.tf' to add aws resources
+2. Create 'terraform.tfvars' to add vars
+3. Commands - `terraform init`, `terraform plan`, `terraform apply`, `terraform destroy`
+[Link to project](https://github.com/mguery/aws-projects/tree/main/terraform)
