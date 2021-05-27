@@ -28,6 +28,11 @@ Only private IP ranges allowed
 
 ---
 
+Watch tutorial: https://youtu.be/ccmWbVjZMkk
+
+[![Build a VPC](https://j.gifs.com/793r28.gif)](https://youtu.be/ccmWbVjZMkk)
+
+
 ## Step 1: Create VPC
 from [vpc console](https://console.aws.amazon.com/vpc/home?region=us-east-1#vpcs:), click create vpc
 - name tag - DemoVPC
