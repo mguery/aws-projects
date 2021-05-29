@@ -28,7 +28,7 @@ Only private IP ranges allowed
 
 ---
 
-Watch tutorial: https://youtu.be/ccmWbVjZMkk
+Watch video: https://youtu.be/ccmWbVjZMkk
 
 [![Build a VPC](https://j.gifs.com/793r28.gif)](https://youtu.be/ccmWbVjZMkk)
 
