@@ -22,13 +22,15 @@
   - IPv4 - 192.168.1.1 -> 32-bit binary -> 4 octets -> 1 octet = 8 bits = one byte
   - Every IP has a network ID and host ID.
   - Subnet masks - 192.168.1.1 (network part) with a sm 255.255.255.0 (node part)
-  - IPv6 - hexadecimal
- 
-- Static vs Dynamic
-- OSI Model
-- TCP vs UDP 
-- DMZs 
-- Bastion host
+  - IPv6 - hexadecimal - 2001:db8::8a2e:370:7334
+- Static vs Dynamic - static - hard-coded IP add / dynamic - randomly assigned IPs
+- [OSI Model](https://www.imperva.com/learn/application-security/osi-model/) - describes seven layers that computer systems use to communicate over a network.
+
+![image](https://user-images.githubusercontent.com/10605985/120267871-d1643e00-c272-11eb-9f7a-c0aeeb22f3b2.png)
+
+- [TCP vs UDP](https://www.howtogeek.com/190014/htg-explains-what-is-the-difference-between-tcp-and-udp/) - connection based - back and forth communication with packets / connectionless - order of packets doesn't matter (Zoom, YouTube), no error checking so pkts can be lost 
+- [DMZs - demilitarized zone](https://www.fortinet.com/resources/cyberglossary/what-is-dmz) - subnetwork that sits between the public internet and private networks, allows an organization to access untrusted networks, such as the internet, while ensuring its private network or LAN remains secure
+- [Bastion host](https://www.geeksforgeeks.org/what-is-aws-bastion-host/) - server or an instance that is used to configure to work against the attacks or threats. AKA ‘jump box’ that acts like a proxy server and allows the client machines to connect to the remote server. GW between the private subnet and the internet. / Can use with a VPN for security?
 - Ports
   - 22 - SSH (secure shell) - log into Linux instance
   - 21 FTP (file transport protocol) - upload files into a file share
@@ -38,31 +40,35 @@
   - 3389 - RDP (Remote Desktop Protocol) - log into Windows instance
 - latency - time it takes for a packet to be transferred across a ntwk / how fast
 - throughout - amount of data or requests that can be sent per unit time (MBs, GBs) / how much 
-- 
+
 **Subnetting**
 
+Split the network to have more than 1 network available to use and control the hosts. 
 - Classes
-  - Public IP address - you can find this on the internet
-  - Private IP address - IPs set aside to use in a private network, you're not on the internet but have internet access. Used locally:
+  - Public IP address / Internet IP - IP address that your home or business router receives from your ISP and is used when you access the internet. Each device has a unique IP. To hide your public IP and encrypt data, use a VPN. 
+  - Private IP address / local IP address - IPs reserved for internal use behind a router or other Network Address Translation (NAT) device. You're not on the internet but have internet access. There's a limited supply of public IPs, and you can use private IPs without taking up a public IP. Common private IPs: 
     - Class A - 10.0.0.0 - 10.255.255.255
     - Class B - 172.16.0.0 - 172.31.255.255
     - Class C - 192.168.0.0 - 192.168.255.255
-- 8 Bit
+- 192.168.1.1 -> 32-bit binary -> 4 octets -> 1 octet = 8 bits = one byte
+- Subnetting hack for class c with ex. 192.168.3.0/27 <!--(32 minus CIDR, 2 to the # power = total hosts)-->
+  - 32-27 = 5 (32 = total # of octets, 27 = CIDR) 
+  - 2^5 = 32 hosts
 
 **External access**
 
-- NAT
-- PAT
+- NAT - Network Address Translation - translates the private local IP address to the public global IP address.
+- PAT - Port Address Translation - also translates the private IP addresses of an internal network to the public IP address with the help of Port numbers
 
 **Linux DNS tools**
 
-- dig - collects data and displays DNS info - `dig google.com` ``dig mx google.com` 
-- nslookup - look up the dns query info, converts the domain name or host to IP address. - forward `nslookup google.com`, reverse `nslookup 216.58.211.142`
-- whois - get domain registration info - who's the registered owner, address, email, registrar info, exp. date
-- ipconfig - IP address - v4 and v6, subnet mask, default gateway
-- tracert - displays possible routes (paths) and measures time it takes to go from one dest and back (hops)
-- netstat - IDs all active cnnx you have over the ntwk
-- ping - test if domain can be reached
+- **dig** - collects data and displays DNS info - `dig google.com` ``dig mx google.com` 
+- **nslookup** - look up the dns query info, converts the domain name or host to IP address. - forward `nslookup google.com`, reverse `nslookup 216.58.211.142`
+- **whois** - get domain registration info - who's the registered owner, address, email, registrar info, exp. date
+- **ipconfig** - find your IP address - v4 and v6, subnet mask, default gateway
+- **tracert** (windows) / traceroute - displays possible routes (paths) and measures time it takes to go from one dest and back (hops), pings every device `tracert google.com`
+- **netstat** - IDs all active cnnx you have over the ntwk
+- **ping** - test if domain can be reached, can set # of times to run `ping -t 5 google.com` (on windows)
 - /etc/hosts - your host file with the hostnames, each line is an IP `127.0.0.1 localhost`
 
 TTL - time to live - check the TTL if dns record is changed
