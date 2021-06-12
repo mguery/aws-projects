@@ -146,6 +146,42 @@ delete nat gw, wait until deleted state
 release eip
 delete vpc - deletes vpc, rts, subnets, igw
 
+---
+## Add a PostgreSQL DB
+
+Pre-work - follow steps above to create VPC. Same steps, plus create a second security group for private access. Add inbound rules to your VPC security group that allow traffic from your web server only. Inbound rules - allow DB traffic on port 3306 to connect from your web server to your DB instance to store and retrieve data from your web application to your database.
+
+
+**Create a DB instance**
+1. Go to [RDS console](https://console.aws.amazon.com/rds/) 
+2. Create database
+3. Choose Standard create 
+4. Choose Engine (MySQL, PostpreSQL - free tier compatible)
+5. Use recent version populated
+6. Templates - free tier
+7. DB instance identifier - my-vpc-db
+8. Master username - mypostgres
+9. Master password
+10. Confirm password
+11. DB instance class - burstable classes, db.t2.micro
+12. Storage - use defaults - GP SSD / 20gb / uncheck autoscaling
+13. Availibility and durability - use defaults, (multi-az for in prod best practice)
+14. Connectivity - choose your vpc, subnet groups
+15. Public access - no
+16. VPC security group - choose existing
+17. Choose AZ 
+18. Additional configuration - default 3306 for MySQL, 5432 for Postgresql
+19. Database authentication - select Password authentication
+20. Database options - initial db name - my-rds-db Default settings - Enable auto-backup, 7 days, backup window - no pref, maintenance - enable auto minor version upgrade, window - no pref, deletion protection (uncheck for your projects or you cant delete)
+21. Create database, wait for Available status
+22. Connectivity & security section, view the Endpoint and Port of the DB instance. Use the endpoint and port to connect to web server to DB instance
+
+Create an EC2 instance and install web server
+Follow steps in EC2 section. Add Storage - default, Tags - my-web-server
+Next Configure SG, select exisiting, choose create in pre-work. SG you choose includes inbound rules for SSH (22) and HTTP access (80). Review and launch.
+
+
+---
 
 # Project: Build a VPC with CloudFormation
 
