@@ -185,7 +185,7 @@ Next Configure SG, select exisiting, choose create in pre-work. SG you choose in
 
 # Project: Build a VPC with CloudFormation
 
-[Link to CFN file](https://github.com/mguery/aws-projects/blob/main/cfn/cfn-vpc.yml)
+[Link to CFN file](https://github.com/mguery/aws-projects/tree/main/cfn)
 
 ## Steps 
 1. Create stack
