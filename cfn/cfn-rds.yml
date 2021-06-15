@@ -1,1 +1,132 @@
 
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: This template is a RDS database with PostgreSQL.
+  
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - 
+        Label:
+          default: Export VPC Stack Name
+        Parameters:
+          - ExportVpcStackName
+      - 
+        Label:
+          default: Database Parameters   
+        Parameters:
+          - DatabaseInstanceIdentifier
+          - DatabaseName  
+          - DatabaseUser
+          - DatabasePassword
+          - DatabaseBackupRetentionPeriod
+          - DatabaseAllocatedStorage
+          - DatabaseInstanceClass
+          - MultiAZDatabase
+
+Parameters: 
+  ExportVpcStackName: 
+    Description: Name of VPC stack 
+    Type: String 
+
+  DatabaseInstanceIdentifier:
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+    ConstraintDescription: Must begin with a letter and contain alphanumeric characters
+    Default: mydemodb
+    Description: Instance id name
+    MaxLength: 60
+    MinLength: 1
+    Type: String
+
+  DatabaseName:
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+    ConstraintDescription: Must begin with a letter and contain alphanumeric characters
+    Default: datadb
+    Description: Postgres db name
+    MaxLength: 64
+    MinLength: 1
+    Type: String
+          
+  DatabaseUser:
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+    ConstraintDescription: Must begin with a letter and contain alphanumeric characters
+    Default: mydbadmin
+    Description: Username for db access
+    MaxLength: 16
+    MinLength: 1
+    NoEcho: True
+    Type: String
+
+  DatabasePassword:
+    AllowedPattern: "[a-zA-Z0-9]*"
+    ConstraintDescription: Must contain alphanumeric characters
+    Default: postgresDB123
+    Description: Password for db access
+    MaxLength: 128
+    MinLength: 8
+    NoEcho: True
+    Type: String
+
+  DatabaseBackupRetentionPeriod:
+    ConstraintDescription: DB retention period must be between 0 and 35 days
+    Default: 0
+    Description: Number of days for automatic backups
+    MaxValue: 35
+    MinValue: 0
+    Type: Number
+
+  DatabaseAllocatedStorage:
+    ConstraintDescription: Must be between 5 and 1024Gb
+    Default: 20
+    Description: DB size (Gb)
+    MaxValue: 1024 
+    MinValue: 5
+    Type: Number
+
+  DatabaseInstanceClass:
+    AllowedValues:
+      - db.t2.micro
+    ConstraintDescription: Select valid db instance type
+    Default: db.t2.micro
+    Description: DB instance type
+    Type: String
+
+  MultiAZDatabase:
+    AllowedValues:
+      - true 
+      - false
+    ConstraintDescription: Must be true or false
+    Default: false
+    Description: Create Multi-AZ db instance
+    Type: String
+
+
+Resources:
+  DatabaseSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup 
+    Properties:
+      DBSubnetGroupDescription: Subnet group for RDS db
+      SubnetIds: 
+        - subnet-0c3a6ad348490f0f3
+        - subnet-09a6a39a17eced2b7
+      Tags: 
+        - Key: Name
+          Value: database subnets
+
+  DatabaseInstance:
+    Type: AWS::RDS::DBInstance 
+    Properties:
+      AllocatedStorage: !Ref DatabaseAllocatedStorage
+      BackupRetentionPeriod: !Ref DatabaseBackupRetentionPeriod
+      DBInstanceClass: !Ref  DatabaseInstanceClass
+      DBInstanceIdentifier: !Ref DatabaseInstanceIdentifier
+      DBName: !Ref DatabaseName
+      DBSubnetGroupName: !Ref DatabaseSubnetGroup
+      Engine: Postgres
+      EngineVersion: 12.5  
+      MasterUsername: !Ref DatabaseUser
+      MasterUserPassword: !Ref DatabasePassword
+      MultiAZ: !Ref MultiAZDatabase
+      VPCSecurityGroups: 
+        - sg-0535cf01236081a20
+
