@@ -107,8 +107,8 @@ Resources:
     Properties:
       DBSubnetGroupDescription: Subnet group for RDS db
       SubnetIds: 
-        - subnet-0c3a6ad348490f0f3
-        - subnet-09a6a39a17eced2b7
+        - Fn::ImportValue: !Sub ${ExportVpcStackName}-PrivateSubnet2
+        - Fn::ImportValue: !Sub ${ExportVpcStackName}-PrivateSubnet3
       Tags: 
         - Key: Name
           Value: database subnets
@@ -128,5 +128,5 @@ Resources:
       MasterUserPassword: !Ref DatabasePassword
       MultiAZ: !Ref MultiAZDatabase
       VPCSecurityGroups: 
-        - sg-0535cf01236081a20
+        - Fn::ImportValue: !Sub ${ExportVpcStackName}-DatabaseSecurityGroup
 
