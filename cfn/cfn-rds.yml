@@ -1,7 +1,6 @@
-
 AWSTemplateFormatVersion: 2010-09-09
 
-Description: This template is a RDS database with PostgreSQL.
+Description: This is for a RDS database with PostgreSQL.
   
 Metadata:
   AWS::CloudFormation::Interface:
@@ -107,11 +106,11 @@ Resources:
     Properties:
       DBSubnetGroupDescription: Subnet group for RDS db
       SubnetIds: 
-        - Fn::ImportValue: !Sub ${ExportVpcStackName}-PrivateSubnet2
         - Fn::ImportValue: !Sub ${ExportVpcStackName}-PrivateSubnet3
+        - Fn::ImportValue: !Sub ${ExportVpcStackName}-PrivateSubnet4
       Tags: 
         - Key: Name
-          Value: database subnets
+          Value: Database subnets
 
   DatabaseInstance:
     Type: AWS::RDS::DBInstance 
@@ -127,6 +126,6 @@ Resources:
       MasterUsername: !Ref DatabaseUser
       MasterUserPassword: !Ref DatabasePassword
       MultiAZ: !Ref MultiAZDatabase
+      PubliclyAccessible: true
       VPCSecurityGroups: 
         - Fn::ImportValue: !Sub ${ExportVpcStackName}-DatabaseSecurityGroup
-
