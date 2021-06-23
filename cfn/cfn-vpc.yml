@@ -2,6 +2,30 @@ AWSTemplateFormatVersion: "2010-09-09"
 
 Description:  This template deploys a VPC, with a pair of public and private subnets spread across three Availability Zones. Includes internet gateway, NAT gateway, 2 route tables.
 
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - 
+        Label:
+          default: "VPC CIDR"
+        Parameters:
+          - VpcCIDR 
+      - 
+        Label:
+          default: "Subnet CIDR"
+        Parameters:
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - PublicSubnet3CIDR
+          - PrivateSubnet1CIDR
+          - PrivateSubnet2CIDR
+          - PrivateSubnet3CIDR
+      - 
+        Label:
+          default: "SSH CIDR"
+        Parameters:
+          - SSHLocation    
+
 Parameters:
   EnvironmentName:
     Description: An environment name that is prefixed to resource names
@@ -229,75 +253,6 @@ Resources:
       RouteTableId: !Ref PrivateRouteTable
       SubnetId: !Ref PrivateSubnet3    
 
-
-  ALBSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Enable HTTP/HTTPS access on port 80/443
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          CidrIp: 0.0.0.0/0 
-      Tags:
-        - Key: Name 
-          Value: ALB Security Group
-
-  SSHSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: SSH Security group
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: !Ref SSHLocation
-      Tags:
-        - Key: Name 
-          Value: SSH Security Group
-
-  WebServerSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Enable access via 80/443
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          SourceSecurityGroupId: !Ref ALBSecurityGroup
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          SourceSecurityGroupId: !Ref ALBSecurityGroup
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          SourceSecurityGroupId: !Ref SSHSecurityGroup  
-      Tags:
-        - Key: Name 
-          Value: Web server Security Group
-
-  DatabaseSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Open db for access
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 5432
-          ToPort: 5432
-          SourceSecurityGroupId: !Ref WebServerSecurityGroup
-      Tags:
-        - Key: Name 
-          Value: DB Security Group
-
 Outputs:
   VPC:
     Description: A reference to the created VPC
@@ -348,27 +303,3 @@ Outputs:
     Value: !Ref PrivateSubnet3
     Export:
       Name: !Sub ${AWS::StackName}-PrivateSubnet3
-  
-  ALBSecurityGroup:
-    Description: ALB Security Group ID
-    Value: !Ref ALBSecurityGroup
-    Export:
-      Name: !Sub ${AWS::StackName}-ALBSecurityGroup
-  
-  SSHSecurityGroup:
-    Description: SSH Security Group ID
-    Value: !Ref SSHSecurityGroup
-    Export:
-      Name: !Sub ${AWS::StackName}-SSHSecurityGroup
-
-  WebServerSecurityGroup:
-    Description: Web server Security Group ID
-    Value: !Ref WebServerSecurityGroup
-    Export:
-      Name: !Sub ${AWS::StackName}-WebServerSecurityGroup
-  
-  DatabaseSecurityGroup:
-    Description: DB Security Group ID
-    Value: !Ref DatabaseSecurityGroup
-    Export:
-      Name: !Sub ${AWS::StackName}-DatabaseSecurityGroup
