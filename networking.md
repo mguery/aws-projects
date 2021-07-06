@@ -19,7 +19,7 @@
  
 - DNS - see DNS section below (TL;DR - browser -> router -> query dns server -> from server, IP address is passed back to router -> back to your local machine) 
 - IP addresses
-  - IPv4 - 192.168.1.1 -> 32-bit binary -> 4 octets -> 1 octet = 8 bits = one byte
+  - IPv4 - 192.168.1.1 -> 32-bit binary -> 4 octets -> 1 octet = 8 bits = one byte (4 groups of up to 3 decimal digits)
   - Every IP has a network ID and host ID.
   - Subnet masks - 192.168.1.1 (network part) with a sm 255.255.255.0 (node part)
   - IPv6 - hexadecimal - 2001:db8::8a2e:370:7334
