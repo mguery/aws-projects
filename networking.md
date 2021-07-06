@@ -30,7 +30,7 @@
 
 - [TCP vs UDP](https://www.howtogeek.com/190014/htg-explains-what-is-the-difference-between-tcp-and-udp/) - connection based - back and forth communication with packets / connectionless - order of packets doesn't matter (Zoom, YouTube), no error checking so pkts can be lost 
 - [DMZs - demilitarized zone](https://www.fortinet.com/resources/cyberglossary/what-is-dmz) - subnetwork that sits between the public internet and private networks, allows an organization to access untrusted networks, such as the internet, while ensuring its private network or LAN remains secure
-- [Bastion host](https://www.geeksforgeeks.org/what-is-aws-bastion-host/) - server or an instance that is used to configure to work against the attacks or threats. AKA ‘jump box’ that acts like a proxy server and allows the client machines to connect to the remote server. GW between the private subnet and the internet. / Can use with a VPN for security?
+- [Bastion hosts](https://www.geeksforgeeks.org/what-is-aws-bastion-host/) - server or an instance that is used to configure to work against the attacks or threats. AKA ‘jump box’ that acts like a proxy server and allows the client machines to connect to the remote server. GW between the private subnet and the internet. / Can use with a VPN for security? / use a BH to SSH into private instances. the bastion is in public subnet which in then connected to all other private subnets. make sure bh only has port 22 traffic from the ip you need, noot from the sec groups of your other instances.
 - Ports
   - 22 - SSH (secure shell) - log into Linux instance
   - 21 FTP (file transport protocol) - upload files into a file share
