@@ -1,7 +1,7 @@
 # Networking  
 
 - network - used to connect the networks or it routes traffic between the networks. Router is the Gateway of a network
-- router - gateway out to the internet (default gateway), routes data packets based on their IP addresses, connects LANs and WANs together
+- router - piece of network hardware responsible for forwarding packets to their destinations / a gateway out to the internet (default gateway), routes data packets based on their IP addresses, connects LANs and WANs together
 - switches - maintains a Switch table which has the MAC addresses of all the devices connected to it, can connect the devices only in the same network
 - hubs - mainly used to create a network and connect devices on the same network only
 - wireless routers - 802.11a/b/g/n/ac - FROM a = 54Mbps, 5 GHz freq TO n = 100Mbps, 5 or 2.4 GHz
@@ -130,6 +130,43 @@ MX - Mail Exchange (points mail to email server that should be used to deliver m
 NS - Name server (stores the name server for a DNS entry, indicates which server is responsible for processing queries for a domain) | google.com -> ns1.google.com, ns2.google.com
 
 
+### IP Routing
+
+the process of transferring data through a path across one or more networks. this process begins when a host creates a data packet for a host that is located in another network and ends when that destination host receives the packet. hosts of different networks cannot communicate with each other. If two hosts located in different IP networks want to communicate with each other, they use IP routing. Routers provide IP routing. A router is a specialized device that connects different IP networks. Difft hosts in different IP networks need a router to communicate.
+
+IP routing process relies on two types of protocols:
+- routed protocol - an IP protocol, by using this, a source host packs data pieces and adds the source address and the destination address on each data piece. A data piece with both addresses (source and destination) is known as the IP packet.
+- routing protocols - to figure out all available paths of the network. A router stores these paths in a table called a routing table
+
+[IP routing?](https://study-ccna.com/what-is-ip-routing)
+When you send packets from 1 host on 1 ntwk to another host on another remote ntwk. Process is done by routers, where routers determines the IP address of a pkt, the next hop address, and fwd the pkt. Rtrs use rting tables to determine the next hop add where the pkt should be forwarded. 
+
+> Example: Host A wants to communicate with host B, but host B is on another network. Host A is configured to send all packets destined for remote networks to router R1. Router R1 receives the packets, examines the destination IP address and forwards the packet to the outgoing interface associated with the destination network.
+
+**Default gw** - an interface of a router that connects the local network with the remote network. used when a host doesn’t have a route entry for the specific remote network and doesn’t know how to reach that network. Hosts can be configured to send all packets destined to remote networks to the default gateway, which has a route to reach that network.
+
+**Routing table** - Each router maintains a routing table and stores it in RAM. A routing table is used by routers to determine the path to the destination network. Each routing table consists of the following entries:
+- network destination and subnet mask – specifies a range of IP addresses.
+- remote router – IP address of the router used to reach that network.
+- outgoing interface – outgoing interface the packet should go out to reach the destination network.
+
+There are three different methods for populating a routing table:
+directly connected subnets, using static routing, using dynamic routing
+
+[How does routing work?](https://www.cloudflare.com/learning/network-layer/what-is-routing/) when a router receives a packet, it reads the headers (small bundles of data attached to packets that provide useful info) of the packet to see its intended destination. It then determines where to route the packet based on information in its routing tables.
+
+"Route tables consist of a list of destination subnets, as well as where the “next hop” is to get to the final destination.
+
+Routing tables can either be static or dynamic. **Static routing** tables do not change. A network administrator manually sets up static routing tables. This essentially sets in stone the routes data packets take across the network, unless the administrator manually updates the tables.
+
+**Dynamic routing** tables update automatically. Dynamic routers use various routing protocols to determine the shortest and fastest paths. They also make this determination based on how long it takes packets to reach their destination (think Waze). This requires more computing power, which is why smaller networks may rely on static routing. But for medium-sized and large networks, dynamic routing is much more efficient.
+
+
+
+
+
+
 resources 
 - [MX Toolbox](mxtoolbox.com)
-
+- [Learn networking - CCNA study guide](https://study-ccna.com/)
+- [more on ip routing - TL;DR version](https://www.guru99.com/ip-routing.html)
