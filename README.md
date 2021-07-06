@@ -78,7 +78,8 @@ For Private RT
 - right click > edit subnet associations, pick private subnets, save
 
 ## Step 4: Create IGW
-connection to www. scales horiz, ha, redundant, created sep from vpc. attached to 1 vpc only. 
+allows the VPC to reach the public internet. scales horiz, ha, redundant, created sep from vpc. 1 igw per vpc. public add and placed in public sn can connect to internet. after you attach igw, need a route w/tin each public sn with destination as 0.0.0.0/0 and a target of igw-#####, the id og the igw [notes from here](https://medium.com/@mda590/aws-routing-101-67879d23014d)
+
 from [igw console](https://console.aws.amazon.com/vpc/home?region=us-east-1#igws:), create igw
 - name - demo-igw
 - create internet gateway
@@ -89,14 +90,16 @@ Route tables
 - choose target - igw
 - save routes
 
-## Step 5: Create NAT GW
+## Step 5: Create NAT GW (Network Address Translation)
+> facilitates internet access for resources sitting in a private subnet in a VPC. The NAT gateway (NGW) is placed in a public subnet within the VPC and given a public IP address. This allows the NGW to connect through the internet gateway to the public internet and translate the private addresses of the resources in the private subnets into a public address that can be used to connect to the outside internet. destination as 0.0.0.0/0 and a target of ngw-#####. best practice to create 1 NAT gateway within the public subnet of each availability zone, and then point the route tables in AZ A to the NGW created in AZ A; same concept for AZ B.
+
 from [nat gw page](https://console.aws.amazon.com/vpc/home?region=us-east-1#NatGateways:), create ngw
 - name - demo-ngw
 - choose subnet - public
 - Elastic IP allocation ID - click allocate eip
 - create ngw
 
-Route tables
+[Route tables](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html)
 - right click private rt - edit subnet associations, pick private subnets, save
 - right click > edit routes
 - add route - 0.0.0.0/0
