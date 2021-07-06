@@ -34,6 +34,8 @@ Watch video: https://youtu.be/ccmWbVjZMkk
 
 
 ## Step 1: Create VPC
+A virtual private cloud (VPC) is a virtual network dedicated to your AWS account. It's logically isolated from other virtual networks in the AWS Cloud. You can launch your AWS resources, such as Amazon EC2 instances, into your VPC.
+
 from [vpc console](https://console.aws.amazon.com/vpc/home?region=us-east-1#vpcs:), click create vpc
 - name tag - DemoVPC
 - IPv4 block - 10.0.0.0/16
@@ -43,7 +45,8 @@ from [vpc console](https://console.aws.amazon.com/vpc/home?region=us-east-1#vpcs
 - right click new vpc - enable dns hostname
 
 ## Step 2: Create subnets
-tied to AZ, 2 subnets per az - public and private
+public subnet - subnet that's associated with a route table that has a route to an internet gateway
+tied to AZ, define a CIDR, 2 subnets per az - public and private
 from [subnets](https://console.aws.amazon.com/vpc/home?region=us-east-1#subnets:), create subnet
 - choose vpc
 - name - 'Public-Subnet-A', A/B/C = 1 for each az
@@ -78,7 +81,7 @@ For Private RT
 - right click > edit subnet associations, pick private subnets, save
 
 ## Step 4: Create IGW
-allows the VPC to reach the public internet. scales horiz, ha, redundant, created sep from vpc. 1 igw per vpc. public add and placed in public sn can connect to internet. after you attach igw, need a route w/tin each public sn with destination as 0.0.0.0/0 and a target of igw-#####, the id og the igw [notes from here](https://medium.com/@mda590/aws-routing-101-67879d23014d)
+allows the VPC to connect to the internet and other AWS products. provides ipv4 and ipv6. scales horiz, ha, redundant, created seperate from vpc. 1 igw per vpc. public address and placed in public sn can connect to internet. after you attach igw, need a route w/tin each public sn with destination as 0.0.0.0/0 and a target of igw-#####, the id og the igw [notes from here](https://medium.com/@mda590/aws-routing-101-67879d23014d)
 
 from [igw console](https://console.aws.amazon.com/vpc/home?region=us-east-1#igws:), create igw
 - name - demo-igw
@@ -91,6 +94,7 @@ Route tables
 - save routes
 
 ## Step 5: Create NAT GW (Network Address Translation)
+provides scalable internet access to private instances, ipv4 only
 > facilitates internet access for resources sitting in a private subnet in a VPC. The NAT gateway (NGW) is placed in a public subnet within the VPC and given a public IP address. This allows the NGW to connect through the internet gateway to the public internet and translate the private addresses of the resources in the private subnets into a public address that can be used to connect to the outside internet. destination as 0.0.0.0/0 and a target of ngw-#####. best practice to create 1 NAT gateway within the public subnet of each availability zone, and then point the route tables in AZ A to the NGW created in AZ A; same concept for AZ B.
 
 from [nat gw page](https://console.aws.amazon.com/vpc/home?region=us-east-1#NatGateways:), create ngw
@@ -108,11 +112,11 @@ from [nat gw page](https://console.aws.amazon.com/vpc/home?region=us-east-1#NatG
 
 ## Step 6: Security
 sg 
-- created by default
+- stateful (only need to configure inbound as it remembers which packet enters the network), created by default / operates at ec2 instance level
 - edit demo sg - Inbound rules - SSH, source - 0.0.0.0/0
 
 nacl
-- created by default, edit inbound/outbound rules
+- stateless (doesn’t remember which packet enters the network and the packet gets dropped when it is leaving without explicit outbound rule), created by default, edit inbound/outbound rules, ephemeral ports (temp ports) / subnet level / global firewall
 
 flow log
 - select VPC
