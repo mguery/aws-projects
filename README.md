@@ -1,10 +1,15 @@
 # AWS projects
 
 
-# Project: Build a VPC
-virtual data center in the cloud. control resources, sec, traffic btwn services
+# Project: Build a 3-tier architecture
+- can update 1 tier w/o messing up the other tiers
+- scale up or down/horizontally to support the traffic (add ec2 instances)
+- for security - users can only reach the 1st layer and you can hide the other layers in a private sn
+- high availibility - host in another AZ, increase performance, highly reliable, cost optimization
+- fault tolerant - one instance is down, other instance can take over
 
-# Info
+
+# VPC Info
 - max 5 per region
 - max 5 CIDR per vpc
 - 200 subnets per vpc
@@ -14,7 +19,8 @@ virtual data center in the cloud. control resources, sec, traffic btwn services
 - 5 Ips reserved by AWS 1st and last Ip
 - no overlapping cids with other networks
 - Lower the #, the more Ips 
-- CIDR to IPv4 Conversion - https://ipaddressguide.com/cidr
+- CIDR to IPv4 Conversion - https://ipaddressguide.com/cidr 
+  - a CIDR block is a defined range of IPv4 addresses. the slash (/24) number of bits shared (/24 = 24-bit prefix), primiary block for ex - 10.0.0.0/16
 
 - /32 = 1 IP
 - /24 = 256 IPs
@@ -34,7 +40,7 @@ Watch video: https://youtu.be/ccmWbVjZMkk
 
 
 ## Step 1: Create VPC
-A virtual private cloud (VPC) is a virtual network dedicated to your AWS account. It's logically isolated from other virtual networks in the AWS Cloud. You can launch your AWS resources, such as Amazon EC2 instances, into your VPC.
+virtual private cloud (VPC) - isolated virtual network where you can define your own space and control/manage/organize your ntwk and resources / pay for the resources used like ec2i
 
 from [vpc console](https://console.aws.amazon.com/vpc/home?region=us-east-1#vpcs:), click create vpc
 - name tag - DemoVPC
@@ -45,8 +51,13 @@ from [vpc console](https://console.aws.amazon.com/vpc/home?region=us-east-1#vpcs
 - right click new vpc - enable dns hostname
 
 ## Step 2: Create subnets
-public subnet - subnet that's associated with a route table that has a route to an internet gateway
-tied to AZ, define a CIDR, 2 subnets per az - public and private
+
+- Subnet - when you define a subset/smaller range of IPs from primary cidr block
+- public subnet - subnet that's associated with a route table that has a route to an internet gateway
+tied to AZ, define a subset/smaller range of IPs from primary cidr block / 1st 4 ips and last ip address in each subnet are reserved for networking / no overlapping ip ranges / you need a public ipv4 or elastic ip
+- private subnet - a subnet with no route to the IGW, public ips or EIP. can only access the internet thru a nat gw (which is inside of the ppublic sn)
+
+will create 2 subnets per az - public and private
 from [subnets](https://console.aws.amazon.com/vpc/home?region=us-east-1#subnets:), create subnet
 - choose vpc
 - name - 'Public-Subnet-A', A/B/C = 1 for each az
@@ -66,6 +77,9 @@ Example values for a VPC in 3 AZs
 - 'Private-Subnet-C' > us-east-1c > 10.0.6.0/24
 
 ## Step 3: Create route tables
+Route table - A list of CIDR blocks (IP ranges) that our traffic can leave and come from
+each sn is associated with a rt. A set of rules called routes that are used to determine where network traffic is directed. associate which each sn to a route table (public sn -> public RT)
+
 Create 2 RTs - public and private. associate rt with correct subnet. from [rt page](https://console.aws.amazon.com/vpc/home?region=us-east-1#RouteTables:sort=routeTableId)
 
 For Public RT
@@ -81,7 +95,7 @@ For Private RT
 - right click > edit subnet associations, pick private subnets, save
 
 ## Step 4: Create IGW
-allows the VPC to connect to the internet and other AWS products. provides ipv4 and ipv6. scales horiz, ha, redundant, created seperate from vpc. 1 igw per vpc. public address and placed in public sn can connect to internet. after you attach igw, need a route w/tin each public sn with destination as 0.0.0.0/0 and a target of igw-#####, the id og the igw [notes from here](https://medium.com/@mda590/aws-routing-101-67879d23014d)
+allows the VPC to connect to the internet and other AWS services. provides ipv4 and ipv6. scales horiz, ha, redundant, created seperate from vpc. 1 igw per vpc. public address and placed in public sn can connect to internet. after you attach igw, need a route w/tin each public sn with destination as 0.0.0.0/0 and a target of igw-#####, the id og the igw [notes from here](https://medium.com/@mda590/aws-routing-101-67879d23014d)
 
 from [igw console](https://console.aws.amazon.com/vpc/home?region=us-east-1#igws:), create igw
 - name - demo-igw
@@ -94,8 +108,12 @@ Route tables
 - save routes
 
 ## Step 5: Create NAT GW (Network Address Translation)
-provides scalable internet access to private instances, ipv4 only
-> facilitates internet access for resources sitting in a private subnet in a VPC. The NAT gateway (NGW) is placed in a public subnet within the VPC and given a public IP address. This allows the NGW to connect through the internet gateway to the public internet and translate the private addresses of the resources in the private subnets into a public address that can be used to connect to the outside internet. destination as 0.0.0.0/0 and a target of ngw-#####. best practice to create 1 NAT gateway within the public subnet of each availability zone, and then point the route tables in AZ A to the NGW created in AZ A; same concept for AZ B.
+Subnets connected to the Private Route Table need access to the internet, so set up a NAT Gateway in the public Subnet. (IPv4 only) This allows the NGW to connect through the internet gateway to the public internet and translate the private addresses of the resources in the private subnets into a public address that can be used to connect to the outside internet. 
+- destination as 0.0.0.0/0 and a target of ngw-#####. best practice to create 1 NAT gateway within the public subnet of each availability zone, and then point the route tables in AZ A to the NGW created in AZ A; same concept for AZ B.
+- must specify the public subnet in which the NAT gateway should reside.
+- must specify an Elastic IP address (static, public IPv4 address.) to associate with the NAT gateway when you create it.
+- NAT gateway uses ports 1024-65535. Make sure to enable these in the inbound rules of your network ACL.
+- All IPv6's are internet accessible by default, so the way you make them "private" is by directing traffic out through an Egress Only Internet Gateway (outgoing traffic only). 
 
 from [nat gw page](https://console.aws.amazon.com/vpc/home?region=us-east-1#NatGateways:), create ngw
 - name - demo-ngw
@@ -111,14 +129,23 @@ from [nat gw page](https://console.aws.amazon.com/vpc/home?region=us-east-1#NatG
 - save routes
 
 ## Step 6: Security
+To protect the AWS resources in each subnet, you can use multiple layers of security, including security groups and network access control lists (ACL).
+
 sg 
-- stateful (only need to configure inbound as it remembers which packet enters the network), created by default / operates at ec2 instance level
+- firewall for instances - controls inbound and outbound traffic instances, created by default
+- if you don't specify, instance uses default sg. all inbound traffic is set to deny. new sg has no inb rules.
+- stateful filtering - allow config inbound rules only bc it remembers which packet enters the ntwk and will allow outbound traffic from same port, best practice - allow only traffic reqd (least privilege)
 - edit demo sg - Inbound rules - SSH, source - 0.0.0.0/0
 
 nacl
-- stateless (doesn’t remember which packet enters the network and the packet gets dropped when it is leaving without explicit outbound rule), created by default, edit inbound/outbound rules, ephemeral ports (temp ports) / subnet level / global firewall
+- firewall for subnets - controls inbound and outbound traffic for your subnets and services that use EC2 as a backend (global firewall)
+- has a numbered list of rules - determines whether traffic is allowed in or out, starts with lowest # which is highest priority then works way down to next item
+- custom nacls - add rule for ephemeral ports (temp ports, 32762-65535 range), if you have a ngw, elb, or lambda func, enable 1024-65535 port range
+- stateless filtering - remembers the source or dest ip address and dest port (have inbound rule then need an outbound rule) / use as extra layer of sec with a sg / created by default 
 
 flow log
+collects info about ip traffic going to and from your vpc, published to CW logs and can be sent to s3 buckets / diagnose restrictive sg rules, monitor traffic, determine direction of traffic / doesnt affect ntwk thruput or latency / no realtime data collected or IP traffic to or from these addresses
+
 - select VPC
 - create FL, name - demo-fl
 - filter - accept, reject, or all
