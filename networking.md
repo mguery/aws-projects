@@ -73,6 +73,8 @@ Split the network to have more than 1 network available to use and control the h
 
 TTL - time to live - check the TTL if dns record is changed
 
+**Resources**
+[Linux Networking Commands](https://mindmajix.com/linux-networking-commands-best-examples)
 ---
 
 ## Domain Name System (DNS)
