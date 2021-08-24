@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description:  This template deploys a VPC. 3-tier architecture - web, app, and a database tier. 
+Description:  This template deploys a VPC - 3-tier architecture - web tier (2 public subnets), app tier (2 private subnets), database tier (2 private subnets)
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -110,7 +110,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Subnet | Web Tier
+          Value: !Sub ${EnvironmentName} Public Subnet 1 | Web Tier
 
   PublicSubnet2:
     Type: AWS::EC2::Subnet
@@ -121,7 +121,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Subnet | Web Tier
+          Value: !Sub ${EnvironmentName} Public Subnet 2 | Web Tier
 
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
@@ -132,7 +132,7 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet | App Tier
+          Value: !Sub ${EnvironmentName} Private Subnet 1 | App Tier
 
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
@@ -143,7 +143,7 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet | App Tier
+          Value: !Sub ${EnvironmentName} Private Subnet 2 | App Tier
 
   PrivateSubnet3:
     Type: AWS::EC2::Subnet
@@ -154,7 +154,7 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet | Database Tier
+          Value: !Sub ${EnvironmentName} Private Subnet 3 | Database Tier
 
   PrivateSubnet4:
     Type: AWS::EC2::Subnet
@@ -165,7 +165,7 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet | Database Tier
+          Value: !Sub ${EnvironmentName} Private Subnet 4 | Database Tier
 
   NatGateway1EIP:
     Type: AWS::EC2::EIP
@@ -174,7 +174,7 @@ Resources:
       Domain: VPC
       Tags:
         - Key: Name 
-          Value: EIP
+          Value: !Sub ${EnvironmentName} - EIP
 
   NatGateway1:
     Type: AWS::EC2::NatGateway
