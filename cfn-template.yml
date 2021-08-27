@@ -1,23 +1,45 @@
-# template sections https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html
+# CloudFormartion Template
+
+------------
+## Resources
+------------
+
+- [AWS Docs - Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html)
+  - [Metadata](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html)
+  - [Parameters](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html)
+  - [Rules](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/rules-section-structure.html)
+  - [Mappings](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/mappings-section-structure.html)
+  - [Conditions](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/conditions-section-structure.html)
+  - [Transform](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html)
+  - [Resources](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html)
+  - [Outputs](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html)
+- [The AWS CloudFormation Fundamentals Series](https://www.youtube.com/watch?v=VgrJDdJhtps&list=PLesRB-DxZa8YOPvZm5RbMS_61EeA-xMKK&index=1)
+  - Workflow: Find the resource you want, pick the properties, add it to the template 
+
+
+------------
+## Template
+------------
 
 AWSTemplateFormatVersion: "2010-09-09"
 
 Description: >
-  Details here.
+  Details about the template here.
 
-Metadata:
+Metadata: 
   Instances:
     Description: "Information about the instances"
   Databases: 
     Description: "Information about the databases"
 
-Parameters:
-  ParameterLogicalID:
-    Type: DataType
+Parameters: 
+  ParamLogicalId:
+    Type: DataType "String"
+    Description:
     ParameterProperty: value
 
 Mappings:
-  Mapping01: 
+  NameofMap: 
     Key01: 
       Name: Value01
     Key02: 
@@ -26,21 +48,22 @@ Mappings:
       Name: Value03
 
 Conditions:
-  Logical ID:
+  LogicalId:
     Intrinsic function
 
 Transform:
   set of transforms
 
 Resources:
-  Logical ID:
-    Type: Resource type
+  LogicalId:
+    Type: "AWS::Cloud9::EnvironmentEC2"
     Properties:
-      Set of properties
+      PropertyName: Value
 
 Outputs:
   Logical ID:
     Description: Information about the value
     Value: Value to return
     Export:
-      Name: Value to export
+      Name: 
+        Fn::Sub: ${AWS::StackName}-SecurityGroupId
