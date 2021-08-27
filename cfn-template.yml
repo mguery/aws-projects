@@ -1,8 +1,7 @@
 # CloudFormartion Template
 
-------------
+
 ## Resources
-------------
 
 - [AWS Docs - Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html)
   - [Metadata](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html)
@@ -18,7 +17,7 @@
 
 
 ------------
-## Template
+## YAML Template
 ------------
 
 AWSTemplateFormatVersion: "2010-09-09"
