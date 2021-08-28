@@ -223,23 +223,23 @@ Pre-work - follow steps above to create VPC. Same steps, plus create a second se
 
 https://www.pgadmin.org/docs/pgadmin4/development/server_dialog.html
 
-General - name of db 
+General 
+- name of db 
 
 Connection 
-Hostname: Enter the RDS DB instance endpoint 
-Server port: rds port #
-DB Username 
-DB Password 
+- Hostname: Enter the RDS DB instance endpoint 
+- Server port: rds port #
+- DB Username 
+- DB Password 
 
 SSH Tunnel
-Enable/Use SSH Tunneling
-Tunnel host: Public DNS name of the EC2 instance.
-Tunnel port: 22
-SSH Username: ec2-user
-Enable Authentication
-SSH Key File: your pem file
-Password: password for the key pair
-
+- Enable/Use SSH Tunneling
+- Tunnel host: Public DNS name of the EC2 instance.
+- Tunnel port: 22
+- SSH Username: ec2-user
+- Enable Authentication
+- SSH Key File: your pem file
+- Password: password for the key pair
 
 
 ---
