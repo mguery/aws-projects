@@ -158,10 +158,9 @@ from [ec2 page](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Home
 - select Amazon Linux 2 AMI (free tier)
 - choose instance type - t2.micro, next
 - configure instance details - choose vpc, choose public subnet, make sure auto-assign public ip enabled, next - add storage
-- next: add tags
-- next: configure security group - select an existing sg - your sg id, review and launch, launch
+- next: add tags (ex. Name: Bastion)
+- next: configure security group - select an existing sg / (for bastion host - create new - add rule - SSH SG, custom tcp, tcp, 22, custom - MyIP), review and launch, launch
 - select key pair and click launch instances or create new key pair and download key pair, and launch
-- rename ec2 instance 
 
 ## Step 8: Connect
 - Choose ec2 instance
@@ -181,7 +180,17 @@ release eip
 delete vpc - deletes vpc, rts, subnets, igw
 
 ---
-## Add a PostgreSQL DB
+## Bastion host
+- Launch an EC2 instance in a public subnet. From security group - 'SSH SG', custom TCP, port 22, custom - myip, launch. 
+- Click Connect, under SSH Client - Copy and paste the example command in your cmd line ('cd' to where key pair is (.pem file))
+- Copy private Ipv4 address and paste into your SSH security group - inbound rule - custom myip
+
+If you're using puTTY
+- Run puttygen to convert pem to ppk - load, choose pem key, enter passphrase, save as private key, close
+- run Pageant - add key, pick new ppk key pair you've created, enter passphrase, close
+- run puTTY - grab public ip from EC2, under Session - ec2-user@paste.public.ip.here / under SSH, Auth - check Agent Forwarding, Open, yes / ssh ec2-user@paste.private.ip.here, yes
+
+### Add a PostgreSQL DB
 
 Pre-work - follow steps above to create VPC. Same steps, plus create a second security group for private access. Add inbound rules to your VPC security group that allow traffic from your web server only. Inbound rules - allow DB traffic on port 3306 to connect from your web server to your DB instance to store and retrieve data from your web application to your database.
 
@@ -192,27 +201,45 @@ Pre-work - follow steps above to create VPC. Same steps, plus create a second se
 3. Choose Standard create 
 4. Choose Engine (MySQL, PostpreSQL - free tier compatible)
 5. Use recent version populated
-6. Templates - free tier
-7. DB instance identifier - my-vpc-db
-8. Master username - mypostgres
+6. Templates - free tier or Dev/Test
+7. DB instance identifier - vpcdb
+8. Master username - dbadmin1
 9. Master password
 10. Confirm password
-11. DB instance class - burstable classes, db.t2.micro
-12. Storage - use defaults - GP SSD / 20gb / uncheck autoscaling
+11. DB instance class - burstable classes, db.t3.micro
+12. Storage - use defaults - General Purpose SSD / 20 GiB / uncheck Storage autoscaling
 13. Availibility and durability - use defaults, (multi-az for in prod best practice)
-14. Connectivity - choose your vpc, subnet groups
-15. Public access - no
-16. VPC security group - choose existing
-17. Choose AZ 
+14. Connectivity - choose your vpc, private subnet group
+15. Public access - yes
+16. VPC security group - choose existing or create new sg - add inbound rule, custom tcp rule, tcp, port for rds, custom - myip - paste ec2 private ipv4
+17. Choose AZ (where your database tier located?)
 18. Additional configuration - default 3306 for MySQL, 5432 for Postgresql
 19. Database authentication - select Password authentication
-20. Database options - initial db name - my-rds-db Default settings - Enable auto-backup, 7 days, backup window - no pref, maintenance - enable auto minor version upgrade, window - no pref, deletion protection (uncheck for your projects or you cant delete)
+20. Database options - initial db name - 'rdsdb' / Leave default settings /  Deletion protection (uncheck for your dev/testing projects or you won't be able to delete)
 21. Create database, wait for Available status
-22. Connectivity & security section, view the Endpoint and Port of the DB instance. Use the endpoint and port to connect to web server to DB instance
+22. Connectivity & security section, view the Endpoint and Port of the DB instance. 
 
-Create an EC2 instance and install web server
-Follow steps in EC2 section. Add Storage - default, Tags - my-web-server
-Next Configure SG, select exisiting, choose create in pre-work. SG you choose includes inbound rules for SSH (22) and HTTP access (80). Review and launch.
+### pgAdmin
+
+https://www.pgadmin.org/docs/pgadmin4/development/server_dialog.html
+
+General - name of db 
+
+Connection 
+Hostname: Enter the RDS DB instance endpoint 
+Server port: rds port #
+DB Username 
+DB Password 
+
+SSH Tunnel
+Enable/Use SSH Tunneling
+Tunnel host: Public DNS name of the EC2 instance.
+Tunnel port: 22
+SSH Username: ec2-user
+Enable Authentication
+SSH Key File: your pem file
+Password: password for the key pair
+
 
 
 ---
