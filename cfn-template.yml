@@ -19,24 +19,73 @@
 ------------
 ## YAML Template
 ------------
+# Filename: 
+# Version: 
+# stack-name: 
 
 AWSTemplateFormatVersion: "2010-09-09"
 
+###########################################################################
+# Section: Description
+###########################################################################
 Description: >
   Details about the template here.
 
-Metadata: 
-  Instances:
-    Description: "Information about the instances"
-  Databases: 
-    Description: "Information about the databases"
+###########################################################################
+# Section: Metadata
+###########################################################################
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    -
+      Label:
+        default: "Environment"
+      Parameters:
+        - Environment
+    -
+      Label:
+        default: "Parameter2"
+      Parameters:
+        - Parameter2
+    
+    ParameterLabels:
+      Environment:
+        default: "The environment where the VPC will be created"
+      Parameter2:
+        default: "Default description"
+        
+###########################################################################
+# Section: Parameters
+###########################################################################        
+Parameters:
+  Environment:
+    Description: "Environment"
+    Type: String
+    ConstraintDescription: "Must be in the set of allowed values"
+    Default: staging
+    AllowedValues:
+      - staging
+      - production
+      - management
+  
+  Parameter2:
+    Description: "Environment"
+    Type: String
+    ConstraintDescription: "Must be in the set of allowed values"
+    Default: staging
+    AllowedValues:
+      - staging
 
-Parameters: 
-  ParamLogicalId:
-    Type: DataType "String"
-    Description:
-    ParameterProperty: value
-
+###########################################################################
+# Section: Conditions
+##########################################################################
+Conditions:
+  LogicalId:
+    Intrinsic function
+    
+###########################################################################
+# Section: Mappings
+###########################################################################
 Mappings:
   NameofMap: 
     Key01: 
@@ -45,20 +94,45 @@ Mappings:
       Name: Value02
     Key03: 
       Name: Value03
-
-Conditions:
-  LogicalId:
-    Intrinsic function
-
+      
+###########################################################################
+# Section: Transform
+###########################################################################
 Transform:
   set of transforms
 
+###########################################################################
+# Section: Resources
+###########################################################################
 Resources:
   LogicalId:
     Type: "AWS::Cloud9::EnvironmentEC2"
     Properties:
       PropertyName: Value
 
+  #############################################################################
+  ##### SUB-SECTION HEADER #####
+  #############################################################################
+
+  ## Item A ##
+  VPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      Tags:
+      - Key: 
+        Value: 
+
+  ## Item B ##
+  ...
+
+  ################### Section/Group A ###############
+  
+   ################### Section/Group B ###############
+
+
+###########################################################################
+# Section: Outputs
+###########################################################################
 Outputs:
   Logical ID:
     Description: Information about the value
@@ -66,3 +140,5 @@ Outputs:
     Export:
       Name: 
         Fn::Sub: ${AWS::StackName}-SecurityGroupId
+  
+  ## Item/Group ##
