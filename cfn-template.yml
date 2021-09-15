@@ -69,10 +69,10 @@ Parameters:
       - management
   
   Parameter2:
-    Description: "Environment"
+    Description: "Parameter2"
     Type: String
     ConstraintDescription: "Must be in the set of allowed values"
-    Default: staging
+    Default: # Example: staging
     AllowedValues:
       - staging
 
