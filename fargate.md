@@ -80,6 +80,8 @@ CodeDeploy can also perform a rolling update across a group of Amazon EC2 instan
 
 ---
 
+From AWS docs
+
 **ECS Deployment Types**
 
 - [Rolling update](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-ecs.html)
