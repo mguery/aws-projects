@@ -78,6 +78,8 @@ From [AWS CodeDeploy | DevOps With AWS Part 3](https://www.linkedin.com/pulse/aw
 
 CodeDeploy can also perform a rolling update across a group of Amazon EC2 instances where only a fraction of the instances are taken offline at any one time. CodeDeploy progressively works its way across the instances allowing applications to remain available and continue serving traffic. For AWS Lambda functions, incoming traffic is gradually routed from the old version to the new one.
 
+Deployment health tracking works in conjunction with rolling updates to keep applications highly available during deployments. Unexpected downtime can occur if bad updates are deployed. AWS CodeDeploy monitors your deployment and will stop deployment if there are too many failed updates.
+
 ---
 
 From AWS docs
