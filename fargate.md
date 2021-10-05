@@ -21,10 +21,9 @@ With Fargate, you build container image -> define mem and compute resources req'
 - LB is single PoC for all outside traffic. To configure a LB, you need to create traget groups. TG can have targets of types of instance or IP address. 
 - LB has listeners configured with port and protocol. It also has rules that will direct rtraffic to target groups if matched. 
 
-**Autoscaling**
-Containers run in Fargate -> Service metrics in CloudWatch -> CW alarms -> Autoscaling policy -> ECS responds to policy -> another container launches in Fargate
+**Autoscaling** - Containers run in Fargate -> Service metrics in CloudWatch -> CW alarms -> Autoscaling policy -> ECS responds to policy -> another container launches in Fargate
 
-Templates to add autoscaling to your service (Downloads file to desktop)
+Templates to add autoscaling to your service (From containersonaws.com. Clicking below automatically downloads file to desktop)
 - [Scale service up and down based on CPU usage](https://s3.amazonaws.com/us-east-1-containersonaws.com/templates/autoscaling/scale-service-by-cpu.yml)
 - [Scale service up and down based on memory usage](https://s3.amazonaws.com/us-east-1-containersonaws.com/templates/autoscaling/scale-service-by-memory.yml)
 
@@ -59,8 +58,57 @@ Templates to add autoscaling to your service (Downloads file to desktop)
 
 To delete cluster, use old AWS console. Then click each task def. to deregister
 
+Notes
+- 
 
 Resources
 - [Deep Dive on Amazon ECS Cluster Auto Scaling](https://aws.amazon.com/blogs/containers/deep-dive-on-amazon-ecs-cluster-auto-scaling/)
 - [Video: How to work with AWS ECS Fargate with Auto Scaling](https://youtu.be/cW0555857M0)
 
+
+---
+
+## CodeDeploy, Fargate, Auto scaling
+
+From [AWS CodeDeploy | DevOps With AWS Part 3](https://www.linkedin.com/pulse/aws-codedeploy-devops-part-3-sandip-das)
+
+### Minimize downtime
+
+- **Rolling and Blue/Green updates** - Applications do not require downtime when they’re being upgraded to a new revision with AWS CodeDeploy. AWS CodeDeploy can perform blue/green deployments to Amazon EC2 instances, an Amazon ECS service (both EC2 and AWS Fargate launch type), or an AWS Lambda function. With a blue/green deployment, the new version of your application is launched alongside the old version. Once the new revision is tested and declared ready, CodeDeploy can shift the traffic from your prior version to your new version according to your specifications.
+
+CodeDeploy can also perform a rolling update across a group of Amazon EC2 instances where only a fraction of the instances are taken offline at any one time. CodeDeploy progressively works its way across the instances allowing applications to remain available and continue serving traffic. For AWS Lambda functions, incoming traffic is gradually routed from the old version to the new one.
+
+---
+
+**ECS Deployment Types**
+
+- [Rolling update](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-ecs.html)
+- [External deployment](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-external.html)
+- **[Blue/Green deployment with CodeDeploy](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-bluegreen.html)**
+  - This deployment type enables you to verify a new deployment of a service before sending production traffic to it. Three ways traffic can shift during a blue/green deployment:
+    - Canary — Traffic is shifted in two increments. You can choose from predeﬁned canary options that specify the percentage of traﬃc shifted to your updated task set in the ﬁrst increment and the interval, in minutes, before the remaining traﬃc is shifted in the second increment.
+    - Linear — Traffic is shifted in equal increments with an equal number of minutes between each increment.
+    - All-at-once — All traffic is shifted from the original task set to the updated task set all at once.
+  - [Perform ECS blue/green deployments through CodeDeploy using AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/blue-green.html)
+    - Blue/green deployments are a safe deployment strategy provided by CodeDeploy for minimizing interruptions caused by changing application versions. This is accomplished by creating your new application environment, referred to as green, alongside your current application that's serving your live traffic, referred to as blue. 
+    - To perform ECS blue/green deployments, you start by creating a stack template that defines the resources for both your blue and green application environments, including specifying the traffic routing and stabilization settings to use.
+    - To enable CloudFormation to perform blue/green deployments on a stack, include the following information in its stack template:
+      - A `Transform` section in your template that invokes the AWS::CodeDeployBlueGreen transform and a Hook section that invokes the AWS::CodeDeploy::BlueGreen hook.
+      - At least one of the ECS resources that will trigger a blue/green deployment if replaced during a stack update. Currently, those resources are AWS::ECS::TaskDefinition and AWS::ECS::TaskSet.
+    - Recommend you have CloudFormation generate a [change set](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html) for the green deployment, before initiating the stack update. This enables you to review the actual changes that will be made to the stack.
+    - [Template example](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/blue-green.html#blue-green-template-example) that sets up an ECS blue/green deployment through CodeDeploy. Creating a stack with the template would provision the initial configuration of the deployment.
+
+---
+
+[Service auto scaling and deployments](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-auto-scaling.html)
+
+Application Auto Scaling disables scale-in processes while Amazon ECS deployments are in progress. However, scale-out processes continue to occur, unless suspended, during a deployment. If you want to suspend scale-out processes while deployments are in progress, take the following steps.
+
+Call the [describe-scalable-targets](https://docs.aws.amazon.com/cli/latest/reference/application-autoscaling/describe-scalable-targets.html) command, specifying the resource ID of the ECS service associated with the scalable target in Application Auto Scaling (Example: service/default/sample-webapp). Record the output. You will need it when you call the next command.
+
+Call the [register-scalable-target](https://docs.aws.amazon.com/cli/latest/reference/application-autoscaling/register-scalable-target.html) command, specifying the resource ID, namespace, and scalable dimension. Specify true for both DynamicScalingInSuspended and DynamicScalingOutSuspended.
+
+After deployment is complete, you can call the [register-scalable-target](https://docs.aws.amazon.com/cli/latest/reference/application-autoscaling/register-scalable-target.html) command to resume scaling.
+
+For more information, see [Suspending and resuming scaling for Application Auto Scaling](https://docs.aws.amazon.com/autoscaling/application/userguide/application-auto-scaling-suspend-resume-scaling.html).
+ - This topic explains how to suspend and then resume one or more of the scaling activities for the scalable targets in your application. The suspend-resume feature is used to temporarily pause scaling activities triggered by your scaling policies and scheduled actions. This can be useful, for example, when you don't want automatic scaling to potentially interfere while you are making a change or investigating a configuration issue. Your scaling policies and scheduled actions can be retained, and when you are ready, scaling activities can be resumed.
