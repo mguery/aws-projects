@@ -32,6 +32,7 @@ Datadog provides three main types of integrations:
 Links 
 - https://www.datadoghq.com/blog/aws-fargate-metrics
 - https://docs.datadoghq.com/integrations/ecs_fargate/?tab=fluentbitandfirelens
+- [My Fargate notes](https://github.com/mguery/aws-projects/blob/main/fargate.md)
 
 ### Memory metrics
 
